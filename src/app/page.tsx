@@ -25,8 +25,8 @@ let ballProperties = {
   // y: 50,
   // vx: 0,
   // vy: 0,
-  friction: 0.7,
-  maxVelocity: 3,
+  friction: 0.8,
+  maxVelocity: 4,
 };
 
 export default function HomePage() {
