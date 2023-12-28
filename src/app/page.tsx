@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 
 declare global {
   interface Window {
@@ -24,11 +25,13 @@ let ballProperties = {
   // y: 50,
   // vx: 0,
   // vy: 0,
-  friction: 0.5,
+  friction: 0.7,
   maxVelocity: 3,
 };
 
 export default function HomePage() {
+  const [, setLeftToRight] = useState<number>(0);
+  const [, setFrontToBack] = useState<number>(0);
 
   const renderVar = (name: string, value: number) => {
     return (
@@ -42,11 +45,14 @@ export default function HomePage() {
 
   const handleDeviceOrientation = (event: any) => {
     // alpha: rotation around z-axis
-    // const rotateDegrees = event.alpha;
+    const rotateDegrees = event.alpha;
     // gamma: left to right
-    const leftToRight = event.gamma;
+    const leftToRight = event.gamma || 0; 
     // beta: front back motion
-    const frontToBack = event.beta;
+    const frontToBack = event.beta || 0;
+
+    setLeftToRight(leftToRight);
+    setFrontToBack(frontToBack);
 
     // update velocity and position
     velocity = handleVelocity(frontToBack, leftToRight);
@@ -67,7 +73,7 @@ export default function HomePage() {
 
   const handleVelocity = (frontToBack: number, leftToRight: number) => {
 
-    // get the current position of the ball
+    // get the current position
     const x = position.x;
     const y = position.y;
     const prevVelocity = velocity;
@@ -105,7 +111,6 @@ export default function HomePage() {
         const permissionState = await (
           window.DeviceOrientationEvent as any
         ).requestPermission();
-        alert(permissionState);
         if (permissionState === "granted") {
           window.addEventListener("deviceorientation", handleDeviceOrientation);
         }
