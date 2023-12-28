@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 
 declare global {
   interface Window {
@@ -14,8 +13,8 @@ interface Coordinate {
   y: number;
 }
 
-let position:Coordinate = {x: 50, y: 50};
-let velocity:Coordinate = {x: 0, y: 0};
+let position: Coordinate = { x: 50, y: 50 };
+let velocity: Coordinate = { x: 0, y: 0 };
 let ballProperties = {
   radius: 50,
   width: 50,
@@ -27,33 +26,29 @@ let ballProperties = {
   // vy: 0,
   friction: 0.5,
   maxVelocity: 3,
-}
+};
 
 export default function HomePage() {
-
-  const [rotation, setRotation] = useState<number>(0);
-  const [leftToRight, setLeftToRight] = useState<number>(0);
-  const [frontToBack, setFrontToBack] = useState<number>(0);
 
   const renderVar = (name: string, value: number) => {
     return (
       <div>
-        <span>{name}: {value.toFixed(2)}</span>
+        <span>
+          {name}: {value.toFixed(2)}
+        </span>
       </div>
-    )
-  }
+    );
+  };
 
   const handleDeviceOrientation = (event: any) => {
     // alpha: rotation around z-axis
-    const rotateDegrees = event.alpha;
+    // const rotateDegrees = event.alpha;
     // gamma: left to right
     const leftToRight = event.gamma;
     // beta: front back motion
     const frontToBack = event.beta;
 
-    setRotation(rotateDegrees || 0);
-    setLeftToRight(leftToRight || 0);
-    setFrontToBack(frontToBack || 0);
+    // update velocity and position
     velocity = handleVelocity(frontToBack, leftToRight);
     position = handlePosition();
   };
@@ -68,25 +63,27 @@ export default function HomePage() {
     newY = Math.max(0, Math.min(100, newY));
 
     return { x: newX, y: newY };
-  }
+  };
 
   const handleVelocity = (frontToBack: number, leftToRight: number) => {
 
+    // get the current position of the ball
     const x = position.x;
     const y = position.y;
     const prevVelocity = velocity;
 
-    const {
-      friction,
-      maxVelocity,
-    } = ballProperties;
+    // get the friction and maxVelocity from the ballProperties
+    const { friction, maxVelocity } = ballProperties;
 
+    // calculate the new velocity
     let newVX = prevVelocity.x + leftToRight / 100;
     let newVY = prevVelocity.y + frontToBack / 100;
+
     // ensure the velocity stays within the maxVelocity and -maxVelocity
     newVX = Math.max(-maxVelocity, Math.min(maxVelocity, newVX));
     newVY = Math.max(-maxVelocity, Math.min(maxVelocity, newVY));
 
+    // if the ball hits the edge, bounce it back
     if (y + prevVelocity.y < 0 || y + prevVelocity.y > 100) {
       newVY = -newVY * friction;
     }
@@ -95,17 +92,21 @@ export default function HomePage() {
     }
 
     return { x: newVX, y: newVY };
-  }
-  
+  };
+
   const requestPermission = async () => {
     // create a event listener that listens device orientation change
     if (window.DeviceOrientationEvent) {
       // Check if we need to request permission for iOS 13+
-      if (typeof window.DeviceOrientationEvent.requestPermission === 'function') {
+      if (
+        typeof window.DeviceOrientationEvent.requestPermission === "function"
+      ) {
         // Handle user interaction
-        const permissionState = await (window.DeviceOrientationEvent as any).requestPermission();
-        alert(permissionState)
-        if (permissionState === 'granted') {
+        const permissionState = await (
+          window.DeviceOrientationEvent as any
+        ).requestPermission();
+        alert(permissionState);
+        if (permissionState === "granted") {
           window.addEventListener("deviceorientation", handleDeviceOrientation);
         }
       } else {
@@ -113,12 +114,12 @@ export default function HomePage() {
       }
     }
     // reset vars
-    velocity = {x: 0, y: 0};
-    position = {x: 50, y: 50};
-  }
+    velocity = { x: 0, y: 0 };
+    position = { x: 50, y: 50 };
+  };
 
   return (
-    <main 
+    <main
       className="flex min-h-screen flex-col items-center justify-center bg-zinc-900 text-white"
       onClick={requestPermission}
     >
@@ -128,15 +129,18 @@ export default function HomePage() {
         {renderVar("velocity.x", velocity.x)}
         {renderVar("velocity.y", velocity.y)}
       </div>
-      <div id="ball" style={{
-        position: 'absolute',
-        top: `${position.y}%`,
-        left: `${position.x}%`,
-        width: `${ballProperties.width}px`,
-        height: `${ballProperties.height}px`,
-        borderRadius: '50%',
-        backgroundColor: '#1070a3',
-      }}></div>
+      <div
+        id="ball"
+        style={{
+          position: "absolute",
+          top: `${position.y}%`,
+          left: `${position.x}%`,
+          width: `${ballProperties.width}px`,
+          height: `${ballProperties.height}px`,
+          borderRadius: "50%",
+          backgroundColor: "#1070a3",
+        }}
+      ></div>
     </main>
   );
 }
