@@ -75,7 +75,6 @@ export default function HomePage() {
   useEffect(() => {
     // Set a CSS variable to the height of the viewport
     document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-  
     // Update the CSS variable whenever the window is resized
     const handleResize = () => {
       document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
@@ -148,12 +147,14 @@ export default function HomePage() {
     }
   };
 
+  // apply force based on the touch position
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.touches[0];
     if (touch)
     applyForce({ x: touch.clientX, y: touch.clientY });
   }
 
+  // apply force based on the mouse position
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const mousePosition = {
       x: e.nativeEvent.offsetX,
@@ -162,6 +163,7 @@ export default function HomePage() {
     applyForce(mousePosition);
   };
 
+  // apply a force to all bodies within a certain distance of the mouse
   const applyForce = (
     position: { x: number; y: number },
   ) => {
@@ -188,7 +190,6 @@ export default function HomePage() {
     const leftToRight = event.gamma || 0; 
     // beta: front back motion
     const frontToBack = event.beta || 0;
-
     // adjust gravity based on the device orientation
     engine.current.world.gravity.x = Math.sin(leftToRight / 180 * Math.PI);
     engine.current.world.gravity.y = Math.sin(frontToBack / 180 * Math.PI);
