@@ -63,7 +63,7 @@ export default function HomePage() {
       // destroy Matter
       Render.stop(render);
       // World.remove(engine.current.world)
-      // World.remove(engine.current.world, mouseConstraint);
+      // World.remove(engine.current.world, mouseConstraint)https://a23b-62-3-36-70.ngrok-free.app;
       Engine.clear(engine.current);
       render.canvas.remove();
       // render.canvas = null
@@ -190,6 +190,8 @@ export default function HomePage() {
     const leftToRight = event.gamma || 0; 
     // beta: front back motion
     const frontToBack = event.beta || 0;
+    // how strong the gravity is
+    const gravityFactor = 1.5;
     // adjust gravity based on the device orientation
     engine.current.world.gravity.x = Math.sin(leftToRight / 180 * Math.PI);
     engine.current.world.gravity.y = Math.sin(frontToBack / 180 * Math.PI);
@@ -214,19 +216,36 @@ export default function HomePage() {
         }
       } else {
         window.addEventListener("deviceorientation", handleDeviceOrientation);
+        setRequestedPermission(true);
       }
     }
     setRequestedPermission(true);
   };
 
+  const renderRequestMessage = () => {
+    return (
+      <div className="absolute top-1/2 right-1/2 translate-x-[50%] translate-y-[-50%] flex flex-col items-center justify-center">
+        <div className="text-xl font-bold text-white text-center">
+          Please allow access to device orientation
+        </div>
+        <button
+          className="mt-4 px-4 py-2 bg-white rounded-lg text-zinc-900 font-bold w-40"
+          onClick={requestPermission}
+        >
+          Allow
+        </button>
+      </div>
+    );
+  }
+
   return (
     <main
-      className="flex min-h-screen flex-col items-center justify-center bg-zinc-900 text-white overflow-hidden"
+      className="relative flex min-h-screen flex-col items-center justify-center bg-zinc-900 text-white overflow-hidden"
     >
+      {!requestedPermission && renderRequestMessage()}
       <div
         ref={scene}
         className="h-screen w-screen bg-red"
-        style={{ height: 'calc(var(--vh, 1vh) * 100)' }}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         onTouchMove={handleTouchMove}
